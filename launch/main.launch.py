@@ -24,18 +24,19 @@ def generate_launch_description():
     return LaunchDescription(
         [
             launch.actions.DeclareLaunchArgument(
-                name="initial_voxel_size", default_value="0.5"
+                name="initial_voxel_size", default_value="0.05"
             ),
             launch.actions.DeclareLaunchArgument(
-                name="distance_threshold", default_value="1.0"
+                name="distance_threshold", default_value="0.1"
             ),
             launch.actions.DeclareLaunchArgument(name="ransac_n", default_value="10"),
             launch.actions.DeclareLaunchArgument(
-                name="num_iterations", default_value="1000"
+                name="num_iterations", default_value="2000"
             ),
             launch.actions.DeclareLaunchArgument(
-                name="max_distance", default_value="2.0"
+                name="max_distance", default_value="3.0"
             ),
+            launch.actions.DeclareLaunchArgument(name="ios_ip_address"),
             launch.actions.IncludeLaunchDescription(
                 launch.launch_description_sources.PythonLaunchDescriptionSource(
                     os.path.join(
@@ -59,6 +60,19 @@ def generate_launch_description():
                     "max_distance": launch.substitutions.LaunchConfiguration(
                         "max_distance"
                     ),
+                }.items(),
+            ),
+            launch.actions.IncludeLaunchDescription(
+                launch.launch_description_sources.PythonLaunchDescriptionSource(
+                    os.path.join(
+                        get_package_share_directory("ros_roar_streamer"),
+                        "roar_sensor_stream_only_with_rviz.launch.py",
+                    )
+                ),
+                launch_arguments={
+                    "ios_ip_address": launch.substitutions.LaunchConfiguration(
+                        "ios_ip_address"
+                    )
                 }.items(),
             ),
             bang_bang_controller_node,
